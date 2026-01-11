@@ -5,23 +5,36 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "password-strength-checker"
 version = "0.1.0"
-description = "Password strength checker (entropy + policy + CLI/JSON output)"
+description = "A Python-based password strength checker with entropy scoring, pattern detection, NIST-style policy presets, CLI, and JSON output."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "Robert Florian Martinez" }]
-keywords = ["security", "password", "cli", "entropy"]
+keywords = ["security", "password", "entropy", "cli", "nist", "cybersecurity"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
+  "Topic :: Security",
 ]
+
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/23rob/password-strength-checker"
+Repository = "https://github.com/23rob/password-strength-checker"
+Issues = "https://github.com/23rob/password-strength-checker/issues"
 
 [project.scripts]
 password-check = "password_strength_checker.cli:main"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "" = "." }
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["password_strength_checker*"]
+exclude = ["tests*", "docs*"]
+
+[tool.setuptools.package-data]
+password_strength_checker = ["py.typed"]
