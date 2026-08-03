@@ -1,4 +1,4 @@
-# 🔐 Password Strength Checker
+# 🔐 Password Security Analyzer
 
 A professional, Python-based password strength checker that evaluates passwords using **entropy analysis**, **pattern detection**, and **NIST-style security policies**.  
 Designed for **cybersecurity portfolios**, **internships**, and **automation-friendly CLI usage**.
