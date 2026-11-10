@@ -7,7 +7,7 @@ name = "password-strength-checker"
 version = "0.1.0"
 description = "A Python-based password strength checker with entropy scoring, pattern detection, NIST-style policy presets, CLI, and JSON output."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Robert Florian Martinez" }]
 keywords = ["security", "password", "entropy", "cli", "nist", "cybersecurity"]
@@ -20,6 +20,9 @@ classifiers = [
 
 dependencies = []
 
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.4"]
+
 [project.urls]
 Homepage = "https://github.com/23rob/password-strength-checker"
 Repository = "https://github.com/23rob/password-strength-checker"
@@ -28,9 +31,6 @@ Issues = "https://github.com/23rob/password-strength-checker/issues"
 [project.scripts]
 password-check = "password_strength_checker.cli:main"
 
-[tool.setuptools]
-package-dir = { "" = "." }
-
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["password_strength_checker*"]
@@ -38,3 +38,13 @@ exclude = ["tests*", "docs*"]
 
 [tool.setuptools.package-data]
 password_strength_checker = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
 """
-Password Strength Checker (portfolio version)
+Password Strength Checker
 
 What it does:
 - Estimates password strength using entropy + heuristics
@@ -20,13 +19,11 @@ import math
 import re
 import sys
 from dataclasses import dataclass
-from typing import List, Tuple, Optional
-
 
 # ----------------------------
 # Common / breached-style passwords (small built-in starter list)
-# NOTE: This is intentionally short for a portfolio demo.
-# You can expand later or load from a file.
+# NOTE: This is intentionally a short starter list. Real deployments should
+# check against a large breached-password corpus instead.
 # ----------------------------
 COMMON_PASSWORDS = {
     "password",
@@ -62,7 +59,7 @@ COMMON_PASSWORDS = {
 
 # ----------------------------
 # Policy presets (NIST-style-ish)
-# - NIST guidance is nuanced; this is an interview-friendly approximation:
+# - NIST guidance is nuanced; this is a simplified approximation:
 #   - Prefer length over complexity
 #   - Block common/compromised passwords
 #   - Allow passphrases
@@ -176,7 +173,7 @@ def has_sequence(pw_lower: str, seq_len: int = 4) -> bool:
     return contains_seq(alpha) or contains_seq(digit)
 
 
-def char_pools_used(pw: str) -> Tuple[bool, bool, bool, bool]:
+def char_pools_used(pw: str) -> tuple[bool, bool, bool, bool]:
     lower = any(c.islower() for c in pw)
     upper = any(c.isupper() for c in pw)
     digit = any(c.isdigit() for c in pw)
@@ -239,21 +236,21 @@ class Result:
     length: int
     entropy_bits: float
     rating: str
-    issues: List[str]
-    improvements: List[str]
+    issues: list[str]
+    improvements: list[str]
     policy_pass: bool
     policy_name: str
 
 
-def check_against_policy(pw: str, policy: Policy) -> Tuple[bool, List[str], List[str]]:
+def check_against_policy(pw: str, policy: Policy) -> tuple[bool, list[str], list[str]]:
     """
     Returns:
     - pass/fail
     - issues (hard failures)
     - improvements (suggestions)
     """
-    issues: List[str] = []
-    improvements: List[str] = []
+    issues: list[str] = []
+    improvements: list[str] = []
 
     pw_stripped = pw.strip()
     if pw_stripped != pw:
@@ -265,7 +262,8 @@ def check_against_policy(pw: str, policy: Policy) -> Tuple[bool, List[str], List
     entropy_bits = estimate_entropy_bits(pw)
     if entropy_bits < policy.min_entropy_bits:
         issues.append(
-            f"Entropy below policy minimum ({entropy_bits:.1f} < {policy.min_entropy_bits:.1f} bits)."
+            f"Entropy below policy minimum "
+            f"({entropy_bits:.1f} < {policy.min_entropy_bits:.1f} bits)."
         )
 
     lower, upper, digit, symbol = char_pools_used(pw)
@@ -281,7 +279,8 @@ def check_against_policy(pw: str, policy: Policy) -> Tuple[bool, List[str], List
         if normalized in COMMON_PASSWORDS:
             issues.append("Password is in a common/compromised password list.")
         # Also catch obvious suffix patterns like password123
-        if any(normalized.startswith(x) for x in ("password", "qwerty")) and any(c.isdigit() for c in normalized):
+        starts_common = normalized.startswith(("password", "qwerty"))
+        if starts_common and any(c.isdigit() for c in normalized):
             issues.append("Looks like a common base word with digits appended (easy to guess).")
 
     # Pattern detections (not always “fail”, but should be called out)
@@ -297,7 +296,9 @@ def check_against_policy(pw: str, policy: Policy) -> Tuple[bool, List[str], List
     if len(pw) < 16:
         improvements.append("Consider a longer passphrase (16+ chars) for stronger security.")
     if not symbol:
-        improvements.append("Adding a symbol can increase strength (optional if using a long passphrase).")
+        improvements.append(
+            "Adding a symbol can increase strength (optional if using a long passphrase)."
+        )
 
     passed = len(issues) == 0
     return passed, issues, improvements
@@ -370,10 +371,10 @@ def to_json(result: Result) -> str:
     return json.dumps(payload, indent=2)
 
 
-def parse_args(argv: List[str]) -> argparse.Namespace:
+def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="password-checker",
-        description="Password Strength Checker (portfolio CLI).",
+        description="Password Strength Checker.",
     )
     parser.add_argument(
         "-p",
@@ -402,7 +403,7 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
     policy = POLICIES[args.policy]
 
@@ -429,7 +430,3 @@ def main(argv: Optional[List[str]] = None) -> int:
     if not result.policy_pass:
         return 2
     return exit_code_from_rating(result.rating)
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
