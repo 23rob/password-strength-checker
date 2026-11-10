@@ -90,7 +90,7 @@ pytest --cov=password_strength_checker
 ruff check .
 ```
 
-35 tests cover entropy math, rating thresholds, each pattern detector, all three policies, and the CLI (JSON output, exit codes, interactive mode). CI runs on Python 3.9, 3.11, and 3.12.
+35 tests cover entropy math, rating thresholds, each pattern detector, all three policies, and the CLI (JSON output, exit codes, interactive mode). CI runs on Python 3.10, 3.11, and 3.12.
 
 ---
 
